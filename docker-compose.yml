@@ -1,0 +1,23 @@
+version: "3"
+
+services:
+
+  metricbeat:
+    image: docker.elastic.co/beats/metricbeat:${ELASTIC_VERSION:-7.1.1}
+    hostname: "{{.Node.Hostname}}-metricbeat"
+    user: root
+    volumes:
+      - /proc:/hostfs/proc:ro
+      - /sys/fs/cgroup:/hostfs/sys/fs/cgroup:ro
+      - /:/hostfs:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+      - metricbeat:/usr/share/metricbeat/data
+    environment:
+      - ELASTICSEARCH_HOST=https://elasticsearch.tracking.happy.long-nguyen.de:443
+      - KIBANA_HOST=https://kibana.tracking.happy.long-nguyen.de:443
+      - ELASTICSEARCH_USERNAME=elastic
+      - ELASTICSEARCH_PASSWORD=happy_elk
+    command: ["--strict.perms=false", "-system.hostfs=/hostfs"]
+
+volumes:
+  metricbeat:
